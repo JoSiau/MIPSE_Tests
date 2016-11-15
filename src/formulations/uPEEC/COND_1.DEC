@@ -1,0 +1,64 @@
+ Fichier cree par F3DXPE 1.0. Date: 26/06/14 10:00:19                            
+      3            NOMBRE DE DIMENSIONS DU DECOUPAGE                           
+     11            NOMBRE  D'ELEMENTS                                          
+      1            NOMBRE  D'ELEMENTS VOLUMIQUES                               
+      2            NOMBRE  D'ELEMENTS SURFACIQUES                              
+      8            NOMBRE  D'ELEMENTS LINEIQUES                                
+      0            NOMBRE  D'ELEMENTS PONCTUELS                                
+      0            NOMBRE DE MACRO-ELEMENTS                                    
+      8            NOMBRE DE POINTS                                            
+      5            NOMBRE DE REGIONS                                           
+      1            NOMBRE DE REGIONS VOLUMIQUES                                
+      1            NOMBRE DE REGIONS SURFACIQUES                               
+      3            NOMBRE DE REGIONS LINEIQUES                                 
+      0            NOMBRE DE REGIONS PONCTUELLES                               
+      0            NOMBRE DE REGIONS MACRO-ELEMENTAIRES                        
+     20            NOMBRE DE NOEUDS DANS 1 ELEMENT (MAX)                       
+     20            NOMBRE DE POINTS D'INTEGRATION / ELEMENT (MAX)              
+ NOMS DES REGIONS                                            
+     REGIONS VOLUMIQUES                                          
+ DIELECTRIC                                                                      
+     REGIONS SURFACIQUES                                         
+ CONDUCTOR                                                                       
+     REGIONS LINEIQUES                                           
+ B1                                                                              
+ B2                                                                              
+ NULL                                                                            
+      0     4     1
+      0     3     3
+      0     2     3
+      0     2     3
+      0     2     1
+ DESCRIPTEUR DE TOPOLOGIE DES ELEMENTS                       
+           1     7  2202     1     4     0    15     8     0     0     0     0
+           6     7     8     5     2     3     4     1
+           2     4   202     2     3     0     7     4     0     0     0     0
+           6     7     8     5
+           3     4   202     2     3     0     7     4     0     0     0     0
+           2     1     4     3
+           4     2     2     3     2     0     3     2     0     0     0     0
+           6     5
+           5     2     2     4     2     0     3     2     0     0     0     0
+           2     1
+           6     2     2     5     2     0     3     2     0     0     0     0
+           5     8
+           7     2     2     5     2     0     3     2     0     0     0     0
+           8     7
+           8     2     2     5     2     0     3     2     0     0     0     0
+           7     6
+           9     2     2     5     2     0     3     2     0     0     0     0
+           1     4
+          10     2     2     5     2     0     3     2     0     0     0     0
+           4     3
+          11     2     2     5     2     0     3     2     0     0     0     0
+           3     2
+ COORDONNEES DES NOEUDS                                      
+     1    0.000000       0.000000       0.000000    
+     2   0.5000000E-01   0.000000       0.000000    
+     3   0.5000000E-01  0.5000000E-01   0.000000    
+     4    0.000000      0.5000000E-01   0.000000    
+     5    0.000000       0.000000      0.1000000E-01
+     6   0.5000000E-01   0.000000      0.1000000E-01
+     7   0.5000000E-01  0.5000000E-01  0.1000000E-01
+     8    0.000000      0.5000000E-01  0.1000000E-01
+ ==== DECOUPAGE  TERMINE  

@@ -1,0 +1,50 @@
+ Fichier cree par F3DXPE 1.0. Date: 27/10/15 15:32:05                            
+      3            NOMBRE DE DIMENSIONS DU DECOUPAGE                           
+      8            NOMBRE  D'ELEMENTS                                          
+      0            NOMBRE  D'ELEMENTS VOLUMIQUES                               
+      8            NOMBRE  D'ELEMENTS SURFACIQUES                              
+      0            NOMBRE  D'ELEMENTS LINEIQUES                                
+      0            NOMBRE  D'ELEMENTS PONCTUELS                                
+      0            NOMBRE DE MACRO-ELEMENTS                                    
+     10            NOMBRE DE POINTS                                            
+      1            NOMBRE DE REGIONS                                           
+      0            NOMBRE DE REGIONS VOLUMIQUES                                
+      1            NOMBRE DE REGIONS SURFACIQUES                               
+      0            NOMBRE DE REGIONS LINEIQUES                                 
+      0            NOMBRE DE REGIONS PONCTUELLES                               
+      0            NOMBRE DE REGIONS MACRO-ELEMENTAIRES                        
+     20            NOMBRE DE NOEUDS DANS 1 ELEMENT (MAX)                       
+     20            NOMBRE DE POINTS D'INTEGRATION / ELEMENT (MAX)              
+ NOMS DES REGIONS                                            
+     REGIONS SURFACIQUES                                         
+ OMEGA                                                                           
+      0     3     2
+ DESCRIPTEUR DE TOPOLOGIE DES ELEMENTS                       
+           1     3     7     1     3     0     5     3     0     0     0     0
+           5     8    10
+           2     3     7     1     3     0     5     3     0     0     0     0
+           8     9    10
+           3     3     7     1     3     0     5     3     0     0     0     0
+           8     7     9
+           4     3     7     1     3     0     5     3     0     0     0     0
+           5     7     8
+           5     3     7     1     3     0     5     3     0     0     0     0
+           2     3     1
+           6     3     7     1     3     0     5     3     0     0     0     0
+           4     2     1
+           7     3     7     1     3     0     5     3     0     0     0     0
+           6     4     1
+           8     3     7     1     3     0     5     3     0     0     0     0
+           3     6     1
+ COORDONNEES DES NOEUDS                                      
+     1    0.000000       0.000000     -0.5000000E-02
+     2   0.5000000E-01 -0.5000000E-01 -0.5000000E-02
+     3   0.5000000E-01  0.5000000E-01 -0.5000000E-02
+     4  -0.5000000E-01 -0.5000000E-01 -0.5000000E-02
+     5   0.5000000E-01  0.5000000E-01  0.5000000E-02
+     6  -0.5000000E-01  0.5000000E-01 -0.5000000E-02
+     7  -0.5000000E-01  0.5000000E-01  0.5000000E-02
+     8    0.000000       0.000000      0.5000000E-02
+     9  -0.5000000E-01 -0.5000000E-01  0.5000000E-02
+    10   0.5000000E-01 -0.5000000E-01  0.5000000E-02
+ ==== DECOUPAGE  TERMINE  
