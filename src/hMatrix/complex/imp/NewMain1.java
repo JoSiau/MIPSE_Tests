@@ -116,7 +116,7 @@ public class NewMain1 {
         ////////////////////////
         BlockClusterComplex bc = hc.getRoot().getSon(new int[]{0, 2, 0, 0});
         System.out.println("bc = " + bc.toString());
-        bc.printJFrame("lll",hc.getRows());
+        bc.printOnJFrame("lll",hc.getRows());
         //
         //
 //        for (double er : new double[]{1e-1 / 3, 1e-1 / 2.5, 1e-1 / 2, 1e-1 / 1.5}) {
@@ -135,7 +135,7 @@ public class NewMain1 {
             System.out.println("er = "+er);
             BlockClusterComplex bb = bc.copy(true);
             bb.agglomerate(new TruncationControlComplex("rel", er));
-            bb.printJFrame("agglo " + er, hc.getRows());
+            bb.printOnJFrame("agglo " + er, hc.getRows());
             Basic2D tmp = bb.getM();
             if(bb.isAdm()){
                 System.out.println("Rank = "+bb.getRM().getRank());
@@ -151,14 +151,14 @@ public class NewMain1 {
         System.out.println("Error assembly = " + diff.norm2() / xm.norm2());
         
         bc = hc.getRoot().getSon(new int[]{0, 2, 0});//, 0, 3});
-        bc.printJFrame("tt", hc.getRows());
+        bc.printOnJFrame("tt", hc.getRows());
 
     }
 
     public static StorageHmatrixComplex agglo(StorageHmatrixComplex h, double eps) {
 //        StorageHmatrixComplex hc = h.copy(true);
         TruncationControlComplex tol = new TruncationControlComplex("rel", eps);
-        h.Agglomerate(tol);
+        h.agglomerate(tol);
         return h;
     }
 

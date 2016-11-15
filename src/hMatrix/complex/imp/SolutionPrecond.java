@@ -117,12 +117,12 @@ public class SolutionPrecond {
         ////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         hc.getRoot().checkMatricesSize();
-        hc.Agglomerate(tolAss);
+        hc.agglomerate(tolAss);
         hc.printOnJFrame("Hmatrix solution");
         hc.getRoot().checkMatricesSize();
 
         StorageHmatrixComplex hcP = hc.copy(true);
-        hcP.Agglomerate(tolPrecond);
+        hcP.agglomerate(tolPrecond);
         hcP.getRoot().checkMatricesSize();
         hcP.printOnJFrame("Hmatrix precond.");
         HmatrixLUDecompositionComplex hlu = new HmatrixLUDecompositionComplex(hcP, tolPrecond);

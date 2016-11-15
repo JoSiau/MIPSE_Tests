@@ -119,7 +119,7 @@ public class Debugg {
         StorageHmatrixComplex hc = new StorageHmatrixComplex(1.0, hR, omega, Lh, null);
         StorageHmatrixComplex h2 = hc.copy(true);
         TruncationControlComplex tol = new TruncationControlComplex("rel", 3e-1);
-        hc.Agglomerate(tol);
+        hc.agglomerate(tol);
         hc.printOnJFrame("Agglo'd");
         /////////////////////////// >TMP
         double b[] = new double[FDcond.getActiveDofCount() * 2];

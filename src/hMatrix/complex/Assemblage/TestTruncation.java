@@ -129,7 +129,7 @@ public class TestTruncation {
         RkMatrixComplex rk = hc.getRoot().getSon(1).getRM().copy();
         rh.sub(rb);
         System.out.println("Erreur Assemblage Complexe = " + ComplexOperation.norm2(rh) / ComplexOperation.norm2(rb));
-        hc.Agglomerate(new TruncationControlComplex("rel", 1e-4));
+        hc.agglomerate(new TruncationControlComplex("rel", 1e-4));
         RkMatrixComplex rtk = hc.getRoot().getSon(1).getRM().copy();
         hc.printOnJFrame("RL agglo'd");
         rh = hc.prod(v);

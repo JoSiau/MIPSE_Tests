@@ -132,7 +132,7 @@ public class TestComplexAssembly {
             ColumnVector rh = hc.prod(v);
             rh.sub(rb);
             System.out.println("Erreur= " + ComplexOperation.norm2(rh) / ComplexOperation.norm2(rb));
-            hc.Agglomerate(new TruncationControlComplex("rel", 1e-1));
+            hc.agglomerate(new TruncationControlComplex("rel", 1e-1));
             hc.printOnJFrame();
             rh = hc.prod(v);
             rh.sub(rb);

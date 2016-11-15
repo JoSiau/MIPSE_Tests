@@ -156,7 +156,7 @@ public class TestAgglo {
         r_hm.sub(r_exact);
         System.out.println("Erreur assemblage = " + ComplexOperation.norm2(r_hm) / ComplexOperation.norm2(r_exact));
 
-        hc.Agglomerate(new TruncationControlComplex("rel", 1e-4));
+        hc.agglomerate(new TruncationControlComplex("rel", 1e-4));
         hc.printOnJFrame("1e-4");
         r_hm = hc.prod(rhsv);
         r_hm.sub(r_exact);
@@ -194,31 +194,31 @@ public class TestAgglo {
         r_hm.sub(r_exact);
         System.out.println("Erreur assemblage = " + ComplexOperation.norm2(r_hm) / ComplexOperation.norm2(r_exact));
 
-        hc.Agglomerate(new TruncationControlComplex("rel", 1e-4));
+        hc.agglomerate(new TruncationControlComplex("rel", 1e-4));
         hc.printOnJFrame("1e-4");
         r_hm = hc.prod(rhsv);
         r_hm.sub(r_exact);
         System.out.println("Erreur agglo 1e-4 = " + ComplexOperation.norm2(r_hm) / ComplexOperation.norm2(r_exact));
 
-        hc.Agglomerate(new TruncationControlComplex("rel", 1e-3));
+        hc.agglomerate(new TruncationControlComplex("rel", 1e-3));
         hc.printOnJFrame("1e-3");
         r_hm = hc.prod(rhsv);
         r_hm.sub(r_exact);
         System.out.println("Erreur agglo 1e-3 = " + ComplexOperation.norm2(r_hm) / ComplexOperation.norm2(r_exact));
 
-        hc.Agglomerate(new TruncationControlComplex("rel", 1e-2));
+        hc.agglomerate(new TruncationControlComplex("rel", 1e-2));
         hc.printOnJFrame("1e-2");
         r_hm = hc.prod(rhsv);
         r_hm.sub(r_exact);
         System.out.println("Erreur agglo 1e-2 = " + ComplexOperation.norm2(r_hm) / ComplexOperation.norm2(r_exact));
 
-        hc.Agglomerate(new TruncationControlComplex("rel", 1e-1));
+        hc.agglomerate(new TruncationControlComplex("rel", 1e-1));
         hc.printOnJFrame("1e-1");
         r_hm = hc.prod(rhsv);
         r_hm.sub(r_exact);
         System.out.println("Erreur agglo 1e-1 = " + ComplexOperation.norm2(r_hm) / ComplexOperation.norm2(r_exact));
 
-        hc.Agglomerate(new TruncationControlComplex("rel", 3e-1));
+        hc.agglomerate(new TruncationControlComplex("rel", 3e-1));
         hc.printOnJFrame("3e-1");
         r_hm = hc.prod(rhsv);
         r_hm.sub(r_exact);

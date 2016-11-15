@@ -143,7 +143,7 @@ public class HLU {
         System.err.println("Erreur ass = " + ComplexOperation.norm2(r_hm) / ComplexOperation.norm2(r_exact));
 
         TruncationControlComplex tolDec = new TruncationControlComplex("rel", 1e-4);
-        hc.Agglomerate(tolDec);
+        hc.agglomerate(tolDec);
         hc.printOnJFrame("Agglo'd");
 
         r_hm = hc.prod(rhsv);

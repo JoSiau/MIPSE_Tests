@@ -28,6 +28,7 @@ import g2elab.mipse.mipseCore.storage.StorageHmatrixComplex;
 import g2elab.mipse.mipseCore.storage.StorageSparse;
 import g2elab.mipse.numericalTools.matrix.complex.MatrixComplexPartReIm;
 import g2elab.mipse.numericalTools.matrix.complex.bloc.ComplexMatrixAssembly;
+import g2elab.mipse.numericalTools.matrix.complex.dense.basic2D.Basic2D;
 import g2elab.mipse.numericalTools.matrix.real.sparse.rowReal.SparseMatrixRowReal;
 import java.io.File;
 import java.io.IOException;
@@ -83,8 +84,10 @@ public class NewMain {
         
         sol.setCompression(Compression.No);
         ComplexMatrixAssembly m = sol.integration();
-        
+        Basic2D mFull = h.reOrder_Full2HM(m.getFullMatrix());
 
+        h.checkError(mFull, 1e-4);
+        
     }
 
     public static StorageHmatrixComplex extractHmatComplex(MatrixComplexPartReImConvert riz, FunctionSpace rotAlpha) {
