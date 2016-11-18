@@ -11,3 +11,17 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /build/
+!/lib/jcublas-0.5.5.jar
+!/lib/jcusparse-0.5.5.jar
+!/lib/matlabcontrol-4.1.0.jar
+!/lib/commons-math3-3.6.1.jar
+!/lib/jcuda-0.5.5.jar
+!/lib/jcudaUtils-0.0.4.jar
+!/lib/jfreechart-1.0.19.jar
+!/lib/jcurand-0.5.5.jar
+!/lib/jna-master.jar
+!/lib/arpack_combined_all.jar
+!/lib/got_matrix.jar
+!/lib/jcufft-0.5.5.jar
+!/lib/matlabcontrol-4.1.0-javadoc.jar
+!/lib/jcommon-1.0.23.jar
