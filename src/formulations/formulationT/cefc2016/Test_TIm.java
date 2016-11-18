@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  */
 public class Test_TIm {
 
-    public static double f = 100;
+    public static double f = 1e6;
     public static double ep = 1e-4;
     public static double conduc = 55e6;
 //    public static String mesh = "/src/g2elab/mipse/formulationInProgress/magnetodynamic/FormulationT/4HOLES_TRI.DEC";

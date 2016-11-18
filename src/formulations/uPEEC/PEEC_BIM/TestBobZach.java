@@ -94,7 +94,7 @@ public class TestBobZach {
         // Resolution
         /*
          boolean HmatComp = true;
-         solP.setCompression(HmatComp);// Enleve la com pression
+         solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la com pression
          solP.setParamIterativeSolver(1, 10000, -1e-8, 1, -150);
          solP.setParamPreconditionner(1, 500, 0, new double[]{500, -3e-1, 500});
          double ib[][] = solP.resolutionIterative(f);

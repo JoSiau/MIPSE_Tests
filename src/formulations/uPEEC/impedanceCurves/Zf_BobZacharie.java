@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import static g2elab.mipse.formulationInProgress.magnetodynamic.U_PEEC_DIELECTRIC.CONSTANTS.eps0;
 import static formulations.uPEEC.impedanceCurves.Zf_PEEC_RLMPC_SURF_SERPENT.compteFrequenciesLog;
+import g2elab.mipse.mipseCore.matrixCompression.Compression;
 
 /**
  *
@@ -158,7 +159,7 @@ public class Zf_BobZacharie {
         double ib[][] = solP.resolutionIterative(f);
         /*/
          boolean HmatComp = false;
-         solP.setCompression(false);// Enleve la compression
+         solP.setCompression(Compression.No);// Enleve la compression
          double ib[][] = solP.resolutionDirecte(f);
          //*/
         int nDof = FSd.getActiveDofCount() + FSc.getActiveDofCount();

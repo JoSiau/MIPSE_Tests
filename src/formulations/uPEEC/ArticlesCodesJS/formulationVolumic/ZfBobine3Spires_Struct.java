@@ -16,6 +16,7 @@ import g2elab.mipse.meshCore.quantity.ComplexFaceQuantity;
 import g2elab.mipse.meshCore.quantity.RealFaceQuantity;
 import g2elab.mipse.meshCore.region.SurfaceRegion;
 import g2elab.mipse.meshCore.region.VolumeRegion;
+import g2elab.mipse.mipseCore.matrixCompression.Compression;
 import g2elab.mipse.tools.files.Ecriture;
 import g2elab.mipse.tools.multiThreads.GestionnaireTaches;
 import got.matrix.Matrix;
@@ -128,13 +129,13 @@ public class ZfBobine3Spires_Struct {
             double f = ftab[iF];
             /*
              boolean HmatComp = true;
-             solP.setCompression(HmatComp);// Enleve la com pression
+             solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la com pression
              solP.setParamIterativeSolver(1, 10000, -1e-8, 1, -150);
              solP.setParamPreconditionner(1, 500, 0, new double[]{500, -3e-1, 500});
              double ib[][] = solP.resolutionIterative(f);
              /*/
             boolean HmatComp = false;
-            solP.setCompression(HmatComp);// Enleve la compression
+            solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la compression
             double ib[][] = solP.resolutionDirecte(f);
             //*/
             int nDof = FSd.getActiveDofCount() + FSc.getActiveDofCount();

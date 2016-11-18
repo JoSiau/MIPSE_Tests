@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static g2elab.mipse.formulationInProgress.magnetodynamic.U_PEEC_DIELECTRIC.Cond_n_Dielec_Volumic.PEEC_RLMPC_Volume.eps0;
+import g2elab.mipse.mipseCore.matrixCompression.Compression;
 
 /**
  *
@@ -115,13 +116,13 @@ public class Multi_Terminal {
         // Resolution
         /*
          boolean HmatComp = false;
-         solP.setCompression(HmatComp);// Enleve la com pression
+         solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la com pression
          solP.setParamIterativeSolver(1, 100, -1e-10, 1, -1);
          solP.setParamPreconditionner(2, 500, 0, new double[]{1, 1e-4, -1});
          double ib[][] = solP.resolutionIterative(f);
          /*/
         boolean HmatComp = false;
-        solP.setCompression(HmatComp);// Enleve la compression
+        solP.setCompression(Compression.No);// Enleve la compression
         double ib[][] = solP.resolutionDirecte(f);
         //*/
         int nDof = FSd.getActiveDofCount() + FSc.getActiveDofCount();
@@ -222,7 +223,7 @@ public class Multi_Terminal {
         double pf[] = solP.produit(b, new double[2 * solP.getNbLignes()], f);
 
         if (HmatComp) {
-            solP.setCompression(false);
+            solP.setCompression(Compression.No);
             solP.integrationMono();
         }
         Basic2D Mf = new Basic2D(solP.getZbFull(new double[solP.getNbLignes()][2 * solP.getNbLignes()], 0, solP.getNbLignes() - 1, 0, solP.getNbLignes() - 1, f));

@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static g2elab.mipse.formulationInProgress.magnetodynamic.U_PEEC_DIELECTRIC.CONSTANTS.eps0;
+import g2elab.mipse.mipseCore.matrixCompression.Compression;
 
 /**
  *
@@ -128,13 +129,13 @@ public class TestWire {
         // Resolution
         /*
         boolean HmatComp = true;
-        solP.setCompression(HmatComp);// Enleve la com pression
+        solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la com pression
         solP.setParamIterativeSolver(1, 10000, -1e-8, 1, -150);
         solP.setParamPreconditionner(1, 500, 0, new double[]{500, -3e-1, 500});
         double ib[][] = solP.resolutionIterative(f);
         /*/
          boolean HmatComp = false;
-         solP.setCompression(HmatComp);// Enleve la compression
+         solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la compression
          double ib[][] = solP.resolutionDirecte(f);
          //*/
         int nDof = FSd.getActiveDofCount() + FSc.getActiveDofCount();
@@ -179,7 +180,7 @@ public class TestWire {
         double pf[] = solP.produit(b, new double[2 * solP.getNbLignes()], f);
 
         if (HmatComp) {
-            solP.setCompression(false);
+            solP.setCompression(Compression.No);
             solP.integrationMono();
         }
         Basic2D Mf = new Basic2D(solP.getZbFull(new double[solP.getNbLignes()][2 * solP.getNbLignes()], 0, solP.getNbLignes() - 1, 0, solP.getNbLignes() - 1, f));

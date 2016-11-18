@@ -23,6 +23,7 @@ import g2elab.mipse.mipseCore.blockAssembly.complex.MatrixComplexPartReImConvert
 import g2elab.mipse.mipseCore.blockAssembly.real.RealMatrixBlocFmult;
 import g2elab.mipse.mipseCore.matrixCompression.Compression;
 import g2elab.mipse.mipseCore.matrixCompression.hMatrix.Real.BinaryTree.BlockClusterTree;
+import g2elab.mipse.mipseCore.matrixCompression.hMatrix.complex.TruncationControlComplex;
 import g2elab.mipse.mipseCore.storage.StorageHmatrix;
 import g2elab.mipse.mipseCore.storage.StorageHmatrixComplex;
 import g2elab.mipse.mipseCore.storage.StorageSparse;
@@ -30,6 +31,8 @@ import g2elab.mipse.numericalTools.matrix.complex.MatrixComplexPartReIm;
 import g2elab.mipse.numericalTools.matrix.complex.bloc.ComplexMatrixAssembly;
 import g2elab.mipse.numericalTools.matrix.complex.dense.basic2D.Basic2D;
 import g2elab.mipse.numericalTools.matrix.real.sparse.rowReal.SparseMatrixRowReal;
+import g2elab.mipse.numericalTools.vector.full.VectorFull;
+import g2elab.mipse.numericalTools.vector.full.VectorFullComplex;
 import java.io.File;
 import java.io.IOException;
 
@@ -57,6 +60,58 @@ public class NewMain {
         RegionsSet regSet = new RegionsSet(new Region[]{IF.getRegions()[0]});
         ((SurfaceRegion) regSet.getRegion(0)).setThickness(ep);
 
+        FormulationTJ_alpha sol = getSolver(regSet, Compression.HCA);
+        StorageHmatrixComplex h = extractHmatComplex(new MatrixComplexPartReImConvert((MatrixComplexPartReIm) sol.integration().getBlock(0, 0)), sol.getRotAlpha());
+        h.printOnJFrame("h");
+
+        sol = getSolver(regSet, Compression.No);
+        Basic2D m = sol.integration().getBlock(0, 0).getFullMatrix();
+        Basic2D mFull = h.reOrder_Full2HM(m);
+
+        //
+        checkError(h, m, mFull, 1e-4);
+
+        //
+        StorageHmatrixComplex h2 = h.copy(true);
+        h2.agglomerate(new TruncationControlComplex("rel", 1e-4));
+        double er = checkError(h2, m, mFull, 1e-4);
+        System.out.println("Erreur 1e-4 = " + er);
+        //
+        h2 = h.copy(true);
+        h2.agglomerate(new TruncationControlComplex("rel", 1e-2));
+        er = checkError(h2, m, mFull, 1e-2);
+        System.out.println("Erreur 1e-2 = " + er);
+        //
+        h2 = h.copy(true);
+        h2.agglomerate(new TruncationControlComplex("rel", 1e-1));
+        er = checkError(h2, m, mFull, 1e-1);
+        System.out.println("Erreur 1e-1 = " + er);
+        //
+        h2 = h.copy(true);
+        h2.agglomerate(new TruncationControlComplex("rel", 3e-1));
+        er = checkError(h2, m, mFull, 3e-1);
+        System.out.println("Erreur 3e-1 = " + er);
+    }
+
+    public static double checkError(StorageHmatrixComplex h, Basic2D m, Basic2D mFull, double er) {
+        // CHECK ERROR !
+        // -> Block-wise
+        h.checkError(mFull, er);
+        // -> Globally
+        VectorFullComplex x = VectorFullComplex.generateRandom(h.getRows());
+        VectorFullComplex bh = new VectorFullComplex(h.product(x.getValues(true), new double[2 * h.getRows()]));
+        VectorFullComplex bm = new VectorFullComplex(m.product(x.getValues(true), new double[2 * m.getRows()]));
+        VectorFull dif = bh.sub(bm, null);
+        return dif.norm2() / bm.norm2();
+    }
+
+    /**
+     *
+     * @param regSet
+     * @param comp
+     * @return
+     */
+    public static FormulationTJ_alpha getSolver(RegionsSet regSet, Compression comp) {
         // Matériaux
         AbstractMaterial[] materials = new AbstractMaterial[1];
         materials[0] = new LinearConductor(conduc);
@@ -78,16 +133,9 @@ public class NewMain {
         circuit.addSourceISimple(1000000, 960, 1679, "source", 1.0, 0.0);
         circuit.finSaisie();
         sol.setElectricalCircuit(circuit);
+        sol.setCompression(comp);
         sol.setMeshStuff();
-        sol.setCompression(Compression.HCA);
-        StorageHmatrixComplex h = extractHmatComplex(new MatrixComplexPartReImConvert((MatrixComplexPartReIm) sol.integration().getBlock(0, 0)),sol.getRotAlpha());
-        
-        sol.setCompression(Compression.No);
-        ComplexMatrixAssembly m = sol.integration();
-        Basic2D mFull = h.reOrder_Full2HM(m.getFullMatrix());
-
-        h.checkError(mFull, 1e-4);
-        
+        return sol;
     }
 
     public static StorageHmatrixComplex extractHmatComplex(MatrixComplexPartReImConvert riz, FunctionSpace rotAlpha) {

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package formulations.uPEEC.ArticlesCodesJS.formulationVolumic;
+package formulations.uPEEC.ArticlesCodesJS.soutenance;
 
 import g2elab.mipse.circuit.solverCircuitComplex.electricalBlock.BlocElectriqueBasique;
 import static g2elab.mipse.formulationInProgress.magnetodynamic.U_PEEC_DIELECTRIC.CONSTANTS.eps0;
@@ -16,109 +16,132 @@ import g2elab.mipse.meshCore.quantity.RealFaceQuantity;
 import g2elab.mipse.meshCore.region.SurfaceRegion;
 import g2elab.mipse.meshCore.region.VolumeRegion;
 import g2elab.mipse.mipseCore.matrixCompression.Compression;
+import g2elab.mipse.numericalTools.vector.full.VectorFull;
+import g2elab.mipse.numericalTools.vector.full.VectorFullComplex;
 import g2elab.mipse.tools.files.Ecriture;
+import g2elab.mipse.tools.files.Exec;
 import g2elab.mipse.tools.multiThreads.GestionnaireTaches;
 import got.matrix.Matrix;
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * COMPARE THE
  *
  * @author jsiau
  */
-public class Bobine3Spires {
+public class Comparison_CompTechs {
+
+    private static ImportFlux mesh;
+    private static String meshChoice = "SERP_1EP";
+//    private static String meshChoice = "SERP_3EP";
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        GestionnaireTaches.getGestionnaireTaches().setNbCPU(8);
+        GestionnaireTaches.getGestionnaireTaches().setNbCPU(1);
+        double f = 1e6;
+//        solve(Compression.HCA, f);
+        testProds(f);
+        GestionnaireTaches.getGestionnaireTaches().stop();
+    }
 
+    public static void testProds(double f) {
+        PEEC_RLMPC_Volume solFMM = getSolver(Compression.FMM, f);
+        PEEC_RLMPC_Volume solFULL = getSolver(Compression.No, f);
+        //
+        VectorFullComplex x = VectorFullComplex.generateRandom(solFMM.getNbLignes());
+        VectorFullComplex bfmm = new VectorFullComplex(solFMM.produit(x.getValues(true), new double[2 * x.length()], f));
+        VectorFullComplex bfull = new VectorFullComplex(solFULL.produit(x.getValues(true), new double[2 * x.length()], f));
+        //
+        VectorFull dif = bfmm.sub(bfull, null);
+        System.out.println("Erreur prod = " + dif.norm2() / bfull.norm2());
+    }
+
+    /**
+     * LOAD THE MESH
+     */
+    public static void loadMesh() {
         String meshDir = null;
         try {
             meshDir = new java.io.File(".").getCanonicalPath();
         } catch (IOException ex) {
-            Logger.getLogger(RC_1Spire.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Comparison_CompTechs.class.getName()).log(Level.SEVERE, null, ex);
         }
-        meshDir += "/src";
-        ImportFlux mesh = new ImportFlux(meshDir + "/uPEEC/ArticlesCodesJS/FormulationVolumique/BOB3SPIRE_LIGHT_NOSYM.DEC");
-        //
-        // Gather the meshes
-        //
+        mesh = new ImportFlux(meshDir + "/src/formulations/uPEEC/ArticlesCodesJS/soutenance/" + meshChoice + ".DEC");
+    }
+
+    /**
+     *
+     * @param compression
+     * @param f
+     * @return
+     */
+    public static PEEC_RLMPC_Volume getSolver(Compression compression, double f) {
+        if (mesh == null) {
+            loadMesh();
+        }
+        ///////////// Gather the meshes
         // Conductor
-        VolumeRegion conductor = (VolumeRegion) mesh.getRegion(1);
+        VolumeRegion conductor = (VolumeRegion) mesh.getRegion(0);
         // Put the  2 dieledctric regions in an array
-        VolumeRegion dielectrics[] = new VolumeRegion[]{(VolumeRegion) mesh.getRegion(0)};
+        VolumeRegion dielectrics[] = new VolumeRegion[]{(VolumeRegion) mesh.getRegion(1)};
+        // Interface between the conductor and the dielectrics
+        SurfaceRegion interfaceCondDielec = (SurfaceRegion) mesh.getRegion(2);
+        // And compute their union
+        SurfaceRegion dielecAir = (SurfaceRegion) mesh.getRegion(3);
+        SurfaceRegion fluxPos = null;
+        SurfaceRegion fluxNeg = null;
         //
-        SurfaceRegion fluxPos = (SurfaceRegion) mesh.getRegion(2);
-        SurfaceRegion fluxNeg = (SurfaceRegion) mesh.getRegion(3);
-
-        double f = 1e8;
-        boolean computeCapa = true;
-
-        double sigma = 5555555.55;//1 / 1.8e-7;
-        PEEC_RLMPC_Volume solP = new PEEC_RLMPC_Volume(conductor, sigma,
-                dielectrics, new double[]{1000 * eps0},
-                //                null, null, null, null,
-                fluxPos, fluxNeg, null, null,
-                computeCapa);
-
+        PEEC_RLMPC_Volume solP = new PEEC_RLMPC_Volume(conductor, 1 / 1.68e-8,
+                dielectrics, new double[]{4.7 * eps0},
+                fluxPos, fluxNeg, interfaceCondDielec, dielecAir);
         //
-        solP.setPtsDeGaussInductifsVol(-1, 5, 5);
-//        solP.setPtsDeGaussInductifsVol(125, 64, 64);
-        solP.setPtsDeGaussCapacitifs(16, 16);
-        solP.setFullAnalyticalP(true);
-//        solP.setCheckNaN(true);
-
-        //
-        //
+        solP.setPtsDeGaussInductifsVol(27, 8, 8);
+        solP.setPtsDeGaussCapacitifs(4, 4);
+//            solP.setFullAnalyticalP(true);
         //
         BlocElectriqueBasique circuitPur = new BlocElectriqueBasique();
-        int indNodeInf = solP.getIndNodeInfinite();
-        int B1[] = solP.getIndexNodeBorne1();
-        System.out.println("B1= " + Arrays.toString(B1));
-        int B2[] = solP.getIndexNodeBorne2();
-        System.out.println("B2= " + Arrays.toString(B2));
-        int nbBranches;
-        //*
-        int indB1 = indNodeInf + B1.length + B2.length + 1;
-        int indB2 = indB1 + 1;
-        System.out.println("indCommunB1= " + indB1);
-        System.out.println("indCommunB2= " + indB2);
-        for (int i = 0; i < B1.length; i++) {
-            circuitPur.addSourceUSimple(solP.getNbLignes() + i, B1[i], indB1, "Commun Borne1", 0, 0);
+        int nbBranches = solP.getNbLignes();
+        if (mesh.equals("SERP_3EP")) {
+            circuitPur.addSourceISimple(nbBranches, 14351, 14271, "Source I", 1.0, 0.0);
+        }else{
+            
         }
-        for (int i = 0; i < B2.length; i++) {
-            circuitPur.addSourceUSimple(solP.getNbLignes() + B1.length + i, B2[i], indB2, "Commun Borne2", 0, 0);
-        }
-        nbBranches = solP.getNbLignes() + B1.length + B2.length;
-        circuitPur.addSourceISimple(nbBranches, indB1, indB2, "Source I", 1.0, 0.0);        
         circuitPur.finSaisie();
         solP.setCircuitElectrique(circuitPur);
+        solP.setExportTopologie("D:");
+        solP.setCompression(compression);
+        //
+        solP.integration(f);
+        //
+        return solP;
+    }
 
+    /**
+     *
+     * @param compression
+     * @param f
+     * @return
+     */
+    public static double[][] solve(Compression compression, double f) {
+        // CONSTRUCTION OF THE SOLVER
+        PEEC_RLMPC_Volume solP = getSolver(compression, f);
+        // SOLUTION
+        double ib[][] = solP.resolutionIterative(f);
+        //
+        exportRes(solP, ib, f, compression);
+        //
+        return ib;
+    }
+
+    public static void exportRes(PEEC_RLMPC_Volume solP, double ib[][], double f, Compression compression) {
+        String outPath = "D:/jsiau/_Backup_Sources/Resultats/EtudeCompTech/" + compression;
         FaceDeg1 FSd = solP.getFD1_Dielectric();
         FaceDeg1 FSc = solP.getFD1_Conductor();
-
-//        solP.setExportTopologie("D:");
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
-        // Resolution
-//        /*
-         boolean HmatComp = false;
-         solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la com pression
-         solP.setParamIterativeSolver(1, 1e6, -1e-10, 1, -150);
-         solP.setParamPreconditionner(0, 1000, 0, new double[]{500, -3e-1, 500});
-         double ib[][] = solP.resolutionIterative(f);
-         /*/
-        boolean HmatComp = false;
-        solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la compression
-        double ib[][] = solP.resolutionDirecte(f);
-        //*/
+        int nbBranches = solP.getNbLignes();
         int nDof = FSd.getActiveDofCount() + FSc.getActiveDofCount();
 
         System.out.println("nDof= " + nDof);
@@ -127,10 +150,9 @@ public class Bobine3Spires {
             res.setElement(0, solP.getSolveurCircuit().getNumIdBranche(i), ib[0][2 * i]);
             res.setElement(1, solP.getSolveurCircuit().getNumIdBranche(i), ib[0][2 * i + 1]);
         }
-
         try {
             // Save the datas.
-            Ecriture saveRes = new Ecriture("D:/jsiau/_Backup_Sources/Resultats/Dielectric/Bobine3Spires/f" + f + "_RES.out");
+            Ecriture saveRes = new Ecriture(outPath + "/f" + f + "_RES.out");
             for (int i = 0; i < 2; i++) {
                 double[] tmp = new double[nDof];
                 res.row(i).get(tmp);
@@ -139,7 +161,7 @@ public class Bobine3Spires {
             }
             saveRes.close();
         } catch (IOException ex) {
-            Logger.getLogger(RC_1Spire.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Comparison_CompTechs.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         System.out.println("");
@@ -148,9 +170,13 @@ public class Bobine3Spires {
         System.out.println("U= " + ib[1][2 * nbBranches] + " + j* " + ib[1][2 * nbBranches + 1]);
         double Zmod = Math.hypot(ib[1][2 * nbBranches], ib[1][2 * nbBranches + 1]);
         System.out.println("|Z|= " + Zmod);
+        double omega = 2 * Math.PI * f;
+        System.out.println("C12= " + 1 / Zmod / omega);
         System.out.println("");
         System.out.println("");
 
+//        System.out.println("P:\n"+solP.getP());
+        //
         //
         // EXPORT ALL THE QUANTITIES
         //
@@ -158,9 +184,9 @@ public class Bobine3Spires {
         RealFaceQuantity Jreal_d = new RealFaceQuantity(FSd, res.row(0).subvector(0, FSd.getActiveDofCount()));
         RealFaceQuantity Jimag_d = new RealFaceQuantity(FSd, res.row(1).subvector(0, FSd.getActiveDofCount()));
 
-        String path_JrealD = "D:/jsiau/_Backup_Sources/Resultats/Dielectric/Bobine3Spires/" + nDof + "f" + f + "_d_RE.msh";
-        String path_JimD = "D:/jsiau/_Backup_Sources/Resultats/Dielectric/Bobine3Spires/" + nDof + "f" + f + "_d_IM.msh";
-        String path_JmodD = "D:/jsiau/_Backup_Sources/Resultats/Dielectric/Bobine3Spires/" + nDof + "f" + f + "_d_MOD.msh";
+        String path_JrealD = outPath + "/" + nDof + "f" + f + "_d_RE.msh";
+        String path_JimD = outPath + "/" + nDof + "f" + f + "_d_IM.msh";
+        String path_JmodD = outPath + "/" + nDof + "f" + f + "_d_MOD.msh";
 
         ExportGmshHdiv exportJreal = new ExportGmshHdiv(FSd, path_JrealD);
         exportJreal.addQuantity(Jreal_d, "Jreal_d");
@@ -176,9 +202,9 @@ public class Bobine3Spires {
         RealFaceQuantity Jreal_c = new RealFaceQuantity(FSc, res.row(0).subvector(FSd.getActiveDofCount(), FSc.getActiveDofCount()));
         RealFaceQuantity Jimag_c = new RealFaceQuantity(FSc, res.row(1).subvector(FSd.getActiveDofCount(), FSc.getActiveDofCount()));
 
-        String path_JrealC = "D:/jsiau/_Backup_Sources/Resultats/Dielectric/Bobine3Spires/" + nDof + "f" + f + "_c_RE.msh";
-        String path_JimC = "D:/jsiau/_Backup_Sources/Resultats/Dielectric/Bobine3Spires/" + nDof + "f" + f + "_c_IM.msh";
-        String path_JmodC = "D:/jsiau/_Backup_Sources/Resultats/Dielectric/Bobine3Spires/" + nDof + "f" + f + "_c_MOD.msh";
+        String path_JrealC = outPath + "/" + nDof + "f" + f + "_c_RE.msh";
+        String path_JimC = outPath + "/" + nDof + "f" + f + "_c_IM.msh";
+        String path_JmodC = outPath + "/" + nDof + "f" + f + "_c_MOD.msh";
 
         exportJreal = new ExportGmshHdiv(FSc, path_JrealC);
         exportJreal.addQuantity(Jreal_c, "Jreal_c");
@@ -188,7 +214,7 @@ public class Bobine3Spires {
         exportJreal = new ExportGmshHdiv(FSc, path_JmodC);
         exportJreal.addQuantityExportMod(J, "Jmod_c");
 
-        String path_Merge = "D:/jsiau/_Backup_Sources/Resultats/Dielectric/Bobine3Spires/" + nDof + "f" + f + "_MERGE.msh";
+        String path_Merge = outPath + "/" + nDof + "f" + f + "_MERGE.msh";
         try {
             Ecriture merge = new Ecriture(path_Merge);
             merge.ecrire("Merge '" + path_JrealC + "';\n");
@@ -199,14 +225,10 @@ public class Bobine3Spires {
             merge.ecrire("Merge '" + path_JimD + "';\n");
             merge.ecrire("Merge '" + path_JmodD + "';\n");
             merge.close();
-
-            File out_file = new File(path_Merge);
-            Runtime.getRuntime().exec("C:/gmsh-2.8.4-Windows/gmsh.exe " + out_file);
         } catch (IOException ex) {
-            Logger.getLogger(RC_1Spire.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Comparison_CompTechs.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        GestionnaireTaches.getGestionnaireTaches().stop();
+        Exec.openFile(path_Merge);
     }
-    
+
 }

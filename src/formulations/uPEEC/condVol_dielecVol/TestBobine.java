@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static g2elab.mipse.formulationInProgress.magnetodynamic.U_PEEC_DIELECTRIC.CONSTANTS.eps0;
+import g2elab.mipse.mipseCore.matrixCompression.Compression;
 
 /**
  *
@@ -74,7 +75,7 @@ public class TestBobine {
         solP.setPtsDeGaussInductifsVol(27, 8, 8);
         solP.setPtsDeGaussCapacitifs(4, 4);
 //            solP.setFullAnalyticalP(true);
-        solP.setCompression(true);
+        solP.setCompression(Compression.HCA);
 
         //
         //
@@ -114,13 +115,13 @@ public class TestBobine {
         // Resolution
         /*
         boolean HmatComp = true;
-        solP.setCompression(HmatComp);// Enleve la com pression
+        solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la com pression
         solP.setParamIterativeSolver(1, 10000, -1e-8, 1, -150);
         solP.setParamPreconditionner(1, 500, 0, new double[]{1, 1e-4, 30000});
         double ib[][] = solP.resolutionIterative(f);
         /*/
          boolean HmatComp = false;
-         solP.setCompression(HmatComp);// Enleve la compression
+         solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la compression
          double ib[][] = solP.resolutionDirecte(f);
          //*/
         int nDof = FSd.getActiveDofCount() + FSc.getActiveDofCount();

@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import static formulations.uPEEC.impedanceCurves.Zf_PEEC_RLMPC_SURF_SNAKE_CID.compteFrequenciesLin;
 import static formulations.uPEEC.impedanceCurves.Zf_PEEC_RLMPC_SURF_SNAKE_CID.compteFrequenciesLog;
 import static g2elab.mipse.formulationInProgress.magnetodynamic.U_PEEC_DIELECTRIC.Cond_n_Dielec_Volumic.PEEC_RLMPC_Volume.eps0;
+import g2elab.mipse.mipseCore.matrixCompression.Compression;
 
 /**
  *
@@ -129,13 +130,13 @@ public class Zf_RLMPCvol_CondInDielec {
         // Resolution
         /*
          boolean HmatComp = false;
-         solP.setCompression(HmatComp);// Enleve la com pression
+         solP.setCompression(HmatComp?Compression.HCA:Compression.No);// Enleve la com pression
          solP.setParamIterativeSolver(1, 100, -1e-10, 1, -1);
          solP.setParamPreconditionner(2, 500, 0, new double[]{1, 1e-4, -1});
          double ib[][] = solP.resolutionIterative(f);
          /*/
         boolean HmatComp = false;
-        solP.setCompression(HmatComp);// Enleve la compression
+        solP.setCompression(Compression.No);// Enleve la compression
         double ib[][] = solP.resolutionDirecte(f);
         //*/
         int nDof = FSd.getActiveDofCount() + FSc.getActiveDofCount();
