@@ -10,12 +10,14 @@ import static g2elab.mipse.formulationInProgress.magnetodynamic.U_PEEC_DIELECTRI
 import g2elab.mipse.formulationInProgress.magnetodynamic.U_PEEC_DIELECTRIC.Cond_n_Dielec_Volumic.PEEC_RLMPC_Volume;
 import g2elab.mipse.meshCore.IO.flux.ImportFlux;
 import g2elab.mipse.meshCore.IO.gmsh.ExportGmshHdiv;
+import g2elab.mipse.meshCore.elements.ElementFactory;
 import g2elab.mipse.meshCore.functionSpace.FaceDeg1;
 import g2elab.mipse.meshCore.quantity.ComplexFaceQuantity;
 import g2elab.mipse.meshCore.quantity.RealFaceQuantity;
 import g2elab.mipse.meshCore.region.SurfaceRegion;
 import g2elab.mipse.meshCore.region.VolumeRegion;
 import g2elab.mipse.mipseCore.matrixCompression.Compression;
+import g2elab.mipse.numericalTools.matrix.complex.dense.basic2D.Basic2D;
 import g2elab.mipse.numericalTools.vector.full.VectorFull;
 import g2elab.mipse.numericalTools.vector.full.VectorFullComplex;
 import g2elab.mipse.tools.files.Ecriture;
@@ -33,8 +35,8 @@ import java.util.logging.Logger;
  */
 public class Comparison_CompTechs {
 
-    private static ImportFlux mesh;
-    private static String meshChoice = "SERP_1EP";
+    public static ImportFlux mesh;
+    public static String meshChoice = "SERP_1EP";
 //    private static String meshChoice = "SERP_3EP";
 
     /**
@@ -58,12 +60,20 @@ public class Comparison_CompTechs {
         //
         VectorFull dif = bfmm.sub(bfull, null);
         System.out.println("Erreur prod = " + dif.norm2() / bfull.norm2());
+
+        System.out.println("--Ecriture de matFF--");
+        Basic2D.getFullMatrix(solFMM.getFinalMatrix(), solFMM.getNbLignes(), solFMM.getNbLignes()).saveASCII("d:/tmp/matFMM.mat", ',');
+        System.out.println("--Ecriture de matFF terminee--");
+        System.out.println("--Ecriture de matFULL--");
+        Basic2D.getFullMatrix(solFULL.getFinalMatrix(), solFULL.getNbLignes(), solFULL.getNbLignes()).saveASCII("d:/tmp/matFULL.mat", ',');
+        System.out.println("--Ecriture de matFULL terminee--");
     }
 
     /**
      * LOAD THE MESH
      */
     public static void loadMesh() {
+        ElementFactory ory = new ElementFactory(ElementFactory.STEP, ElementFactory.STEP, ElementFactory.STEP);
         String meshDir = null;
         try {
             meshDir = new java.io.File(".").getCanonicalPath();
@@ -71,6 +81,7 @@ public class Comparison_CompTechs {
             Logger.getLogger(Comparison_CompTechs.class.getName()).log(Level.SEVERE, null, ex);
         }
         mesh = new ImportFlux(meshDir + "/src/formulations/uPEEC/ArticlesCodesJS/soutenance/" + meshChoice + ".DEC");
+        ory.addImport(mesh);
     }
 
     /**
@@ -107,8 +118,8 @@ public class Comparison_CompTechs {
         int nbBranches = solP.getNbLignes();
         if (mesh.equals("SERP_3EP")) {
             circuitPur.addSourceISimple(nbBranches, 14351, 14271, "Source I", 1.0, 0.0);
-        }else{
-            
+        } else {
+
         }
         circuitPur.finSaisie();
         solP.setCircuitElectrique(circuitPur);
